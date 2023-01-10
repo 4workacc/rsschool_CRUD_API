@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "start:dev": "nodemon index.js",
-    "start:prod": "node index.js"
+    "start:prod": "node index.js",
+    "test": "mocha"
   },
   "repository": {
     "type": "git",
@@ -20,6 +21,7 @@
   "homepage": "https://github.com/4workacc/rsschool_CRUD_API#readme",
   "devDependencies": {
     "dotenv": "^16.0.3",
+    "mocha": "^10.2.0",
     "nodemon": "^2.0.20",
     "webpack": "^5.75.0",
     "webpack-cli": "^5.0.1"
