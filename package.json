@@ -20,6 +20,8 @@
   "homepage": "https://github.com/4workacc/rsschool_CRUD_API#readme",
   "devDependencies": {
     "dotenv": "^16.0.3",
-    "nodemon": "^2.0.20"
+    "nodemon": "^2.0.20",
+    "webpack": "^5.75.0",
+    "webpack-cli": "^5.0.1"
   }
 }
