@@ -1,0 +1,20 @@
+{
+  "name": "rsschool_crud_api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/4workacc/rsschool_CRUD_API.git"
+  },
+  "author": "Eugen Svirbutovich",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/4workacc/rsschool_CRUD_API/issues"
+  },
+  "homepage": "https://github.com/4workacc/rsschool_CRUD_API#readme"
+}
