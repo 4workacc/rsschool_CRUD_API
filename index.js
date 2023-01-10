@@ -7,13 +7,15 @@ const server = http.createServer((req, res) => {
     console.log(apiPath);
     switch (req.method) {
         case 'GET':
-            if (apiPath.split('/').length === 2) {
+            if (apiPath.split('/').length === 2 && apiPath === 'api/users') {
                 console.log('GET api/users');
             }
-            else if (apiPath.split('/').length === 3) {
+            else if (apiPath.split('/').length === 3  && apiPath === 'api/users') {
                 console.log(`GET api info about user ${apiPath.split('/')[2]}`);
             }
             else {
+                res.statusCode = 404;      
+                res.end();         
                 console.log('GET route error');
             }
             break;
@@ -23,6 +25,8 @@ const server = http.createServer((req, res) => {
                     console.log('POST api/users');
                     break;
                 default:
+                    res.statusCode = 404;
+                    res.end();
                     console.log('POST route error');
             };
             break;
@@ -32,6 +36,8 @@ const server = http.createServer((req, res) => {
                     console.log('PUT api/users/{userId}');
                     break;
                 default:
+                    res.statusCode = 404;
+                    res.end();
                     console.log('PUT route error');
             };
             break;
@@ -41,12 +47,14 @@ const server = http.createServer((req, res) => {
                     console.log('DELETE api/users/${userId}');
                     break;
                 default:
+                    res.statusCode = 404;
+                    res.end();
                     console.log('DELETE route errror');
             };
             break;
-        default:
+        default:           
             console.log('never');
-    }
+    }   
 });
 
 server.listen(PORT, () => { });
