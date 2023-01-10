@@ -1,6 +1,7 @@
 import http from 'http';
+import * as dotenv from 'dotenv';
 
-const PORT = 3333;
+dotenv.config();
 
 const server = http.createServer((req, res) => {
     let apiPath = req.url.substring(1, req.url.length);
@@ -57,4 +58,6 @@ const server = http.createServer((req, res) => {
     }   
 });
 
-server.listen(PORT, () => { });
+server.listen(process.env.PORT, () => {
+    console.log(`Server listen at port ${process.env.PORT}`);
+});
