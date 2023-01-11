@@ -1,3 +1,5 @@
+import * as uuid from 'uuid';
+
 let usersBase = [
     {
         id: '1a1',
@@ -21,4 +23,23 @@ export const getCurrentUser = (userId) => {
         }
     })
     return outUser;
+}
+
+export const putUser = ( userData ) => {
+    let newUUID = uuid.v4();
+    if ( userData.username && userData.age && userData.hobbies ) {
+        let newUser = {
+            id: newUUID,
+            username: userData.username,
+            age: userData.age,
+            hobbies: userData.hobbies
+        };
+        usersBase.push(newUser);
+        console.log(usersBase)
+        return newUser;
+    } else {
+        return {
+            id: -1
+        }
+    }
 }

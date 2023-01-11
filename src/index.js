@@ -1,6 +1,7 @@
 import http from 'http';
 import * as dotenv from 'dotenv';
-import { getAllUsers, getCurrentUser } from './utils/utils.js';
+import { getAllUsers, getCurrentUser, putUser } from './utils/utils.js';
+import { URL } from 'url';
 
 dotenv.config();
 
@@ -40,10 +41,22 @@ const server = http.createServer((req, res) => {
             }
             break;
         case 'POST':
-            if (req.url === validAPI) {
-                console.log('POST api/users');
-                res.statusCode = 201;
-                res.end();
+            if (req.url.indexOf(validAPI) !== -1 ) {
+                console.log('POST api/users');             
+                let reqParams = new URL(`http://localhost:4000${req.url}`).searchParams;
+                let reqData = {};
+                for (const [key, value] of reqParams) {
+                    reqData[key] = value;
+                }                        
+                if ( putUser(reqData).id !== -1 ) {
+                    res.statusCode = 201;
+                    res.end();
+                } else {
+                    res.statusCode = 400;
+                    console.log('POST error: enterning data not complete');
+                    res.end();
+                }     
+                
             }
             else {
                 res.statusCode = 400;
