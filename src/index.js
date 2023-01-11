@@ -1,5 +1,6 @@
 import http from 'http';
 import * as dotenv from 'dotenv';
+import { getAllUsers, getCurrentUser } from './utils/utils.js';
 
 dotenv.config();
 
@@ -10,13 +11,26 @@ const server = http.createServer((req, res) => {
             if (req.url === validAPI) {
                 console.log('GET api/users');
                 res.statusCode = 200;
-                res.end();
+                res.end(JSON.stringify({ 'users': getAllUsers() }));
             }
             else if (req.url.indexOf(`${validAPI}/`) !== -1) {
-                let requestUserId = req.url.split('/')[3];
-                console.log(`GET api info about user ${requestUserId}`);
-                res.statusCode = 200;
-                res.end();
+                let requestUserId = req.url.split('/')[3] || -1;               
+                if (requestUserId !== -1) {
+                    console.log(`GET api info about user ${requestUserId}`);
+                    if (getCurrentUser(requestUserId).id !== -1) {
+                        res.statusCode = 200;
+                        res.end(JSON.stringify({ 'user': getCurrentUser(requestUserId) }));
+                    } else {
+                        console.log('record with id === userId doesn\'t exist');
+                        res.statusCode = 404;
+                        res.end();
+                    }
+
+                } else {
+                    console.log(`GET api ERROR: invalid userID`);
+                    res.statusCode = 400;
+                    res.end();
+                }
             }
             else {
                 res.statusCode = 404; //400
@@ -56,7 +70,7 @@ const server = http.createServer((req, res) => {
                 res.statusCode = 404; //400
                 res.end();
                 console.log('DELETE route errror');
-            }              
+            }
             break;
         default:
             console.log('never');
