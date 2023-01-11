@@ -52,3 +52,11 @@ export const updateUser = ( userId, userData ) => {
     )
    return user;
 }
+
+export const deleteUser= ( userId) => {   
+    for ( let i=0; i<usersBase.length; i++) {
+        if ( usersBase[i].id === userId ) {
+            usersBase.splice(i, 1)
+        }
+    } 
+}

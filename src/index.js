@@ -1,6 +1,6 @@
 import http from 'http';
 import * as dotenv from 'dotenv';
-import { getAllUsers, getCurrentUser, putUser, updateUser } from './utils/utils.js';
+import { deleteUser, getAllUsers, getCurrentUser, putUser, updateUser } from './utils/utils.js';
 import { URL } from 'url';
 
 dotenv.config();
@@ -88,6 +88,8 @@ const server = http.createServer((req, res) => {
             break;
         case 'DELETE':
             if (req.url.indexOf(`${validAPI}/`) !== -1) {
+                let userId = req.url.split('/')[3].split('?')[0];
+                deleteUser(userId);
                 console.log('DELETE api/users/${userId}');
                 res.statusCode = 204;
                 res.end();
