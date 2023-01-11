@@ -1,4 +1,5 @@
 import { IUserData } from "./inerfaces";
+import * as uuid from 'uuid';
 
 let userBase: IUserData[] = [
     {
@@ -28,7 +29,19 @@ export const getOneUserController = ( userId: string ):IUserData => {
     return outUser;
 };
 
-export const addUserController = (userData: IUserData) => {};
+export const addUserController = (userData: IUserData):IUserData => {
+    console.log('hobbies', userData.hobbies)
+    let newUUID: string = uuid.v4();
+    let newUser = {
+        id: newUUID,
+        username: userData.username,
+        age: userData.age,
+        hobbies: userData.hobbies,
+    };
+    userBase.push(newUser);
+    return newUser;
+};
+
 export const modifyUserController = (userId: string, updatedUserData: IUserData ) => {};
 
 export const deleteUser = (userId: string ):number => {

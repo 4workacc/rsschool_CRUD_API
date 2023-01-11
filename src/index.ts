@@ -3,6 +3,7 @@ import * as dotenv from 'dotenv';
 import { addUserController, deleteUser, getAllUsersController, getOneUserController, modifyUserController } from './controllers';
 import { URL } from 'url';
 import { chechIsUUID } from './utils';
+import { IUserData, IUserSubData } from './inerfaces';
 
 dotenv.config();
 
@@ -11,7 +12,7 @@ const validAPI: string = '/api/users';
 const server = createServer((request: IncomingMessage, response: ServerResponse) => {
     let apiPath: string[] = request.url!.split('/');
     console.log(apiPath);
-    if (!(apiPath[1] === 'api') || !(apiPath[2] === 'users')) {
+    if (!(apiPath[1] === 'api') || !(apiPath[2].split('?')[0] === 'users')) {
         response.statusCode = 404;
         response.end('Request is not valid endpoint');
     }
@@ -40,9 +41,27 @@ const server = createServer((request: IncomingMessage, response: ServerResponse)
                 break;
 
             case 'POST':
-                addUserController({
-                    username: 'JOI', age: 100, hobbies: []
-                })
+                let requestBody = new URL(`http://localhost:4000/${request.url}`).searchParams;
+
+                let reqData:IUserSubData = { id:'', username:'', age:1, hobbies: ''} ;       
+
+                for (const [key, value] of requestBody) {
+                    reqData[key] = value;
+                }          
+                let splittedHobbies = reqData.hobbies.split('[')[1].split(']')[0].split(',');                
+                if ( reqData['username'] && reqData['age'] && reqData['hobbies'] ) {
+                    response.statusCode = 200;
+                    response.end(JSON.stringify(addUserController({
+                        id: '',
+                        username: reqData.username,
+                        age: reqData.age,
+                        hobbies: splittedHobbies
+                    })))                    
+                } else {
+                    response.statusCode = 400;
+                    response.end('Request body does not contain required fields');
+                }
+                
                 break;
             case 'PUT':
                 modifyUserController('', { username: 'QQQ', age: 1, hobbies: [] })
