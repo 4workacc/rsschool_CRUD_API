@@ -1,12 +1,6 @@
 import * as uuid from 'uuid';
 
-let usersBase = [
-    {
-        id: '1a1',
-        username: 'Joy',
-        age: 200,
-        hobbies: []
-    }
+let usersBase = [   
 ];
 
 export const getAllUsers = () => {
@@ -42,4 +36,19 @@ export const putUser = ( userData ) => {
             id: -1
         }
     }
+}
+
+export const updateUser = ( userId, userData ) => {    
+    let user = {id: -1};
+    usersBase.forEach( el => {
+        if ( el.id = userId ) {
+            el.id = userId;
+            el.username = userData.username;
+            el.age = userData.age;
+            el.hobbies = userData.hobbies ;
+            };
+            user = el;
+        }
+    )
+   return user;
 }
