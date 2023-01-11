@@ -1,24 +1,3 @@
-// import * as uuid from 'uuid';
-
-// let usersBase = [   
-// ];
-
-// export const getAllUsers = () => {
-//     return usersBase;
-// }
-
-// export const getCurrentUser = (userId) => {   
-//     let outUser = {
-//         id: -1
-//     };
-//     usersBase.forEach( el => {
-//         if ( el.id === userId ) {            
-//             outUser = el;
-//         }
-//     })
-//     return outUser;
-// }
-
 // export const putUser = ( userData ) => {
 //     let newUUID = uuid.v4();
 //     if ( userData.username && userData.age && userData.hobbies ) {
@@ -53,12 +32,7 @@
 //    return user;
 // }
 
-// export const deleteUser= ( userId) => {   
-//     for ( let i=0; i<usersBase.length; i++) {
-//         if ( usersBase[i].id === userId ) {
-//             usersBase.splice(i, 1);
-//             return 200;
-//         }
-//     } 
-//     return 404;
-// }
+export const chechIsUUID = (userId: string ) => {
+    let uuid4Reg:RegExp = /^[0-9A-F]{8}-[0-9A-F]{4}-[4][0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i; 
+    return uuid4Reg.test(userId);
+}

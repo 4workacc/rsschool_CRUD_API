@@ -1,22 +1,44 @@
 import { createServer, IncomingMessage, ServerResponse } from 'http';
 import * as dotenv from 'dotenv';
 import { addUserController, deleteUser, getAllUsersController, getOneUserController, modifyUserController } from './controllers';
+import { URL } from 'url';
+import { chechIsUUID } from './utils';
 
 dotenv.config();
 
 const validAPI: string = '/api/users';
 
 const server = createServer((request: IncomingMessage, response: ServerResponse) => {
-    if (request.url?.indexOf(validAPI) === -1) {
+    let apiPath: string[] = request.url!.split('/');
+    console.log(apiPath);
+    if (!(apiPath[1] === 'api') || !(apiPath[2] === 'users')) {
         response.statusCode = 404;
         response.end('Request is not valid endpoint');
     }
     else {
         switch (request.method) {
             case 'GET':
-                getAllUsersController();
-                getOneUserController('');
+                if (request.url === '/api/users') {
+                    response.statusCode = 200;
+                    response.end(JSON.stringify( getAllUsersController() ));
+                }
+                else {
+                    if (!chechIsUUID(apiPath[3])) {
+                        response.statusCode = 400;
+                        response.end('Enterned userId is not valid UUID');
+                    }
+                    else {
+                        if (getOneUserController(apiPath[3]).id === '-1') {
+                            response.statusCode = 404;
+                            response.end(`User with id = ${apiPath[3]} not found`)
+                        } else {
+                            response.statusCode = 200;
+                            response.end( JSON.stringify(getOneUserController(apiPath[3])))
+                        }
+                    }
+                }
                 break;
+
             case 'POST':
                 addUserController({
                     username: 'JOI', age: 100, hobbies: []
@@ -25,9 +47,17 @@ const server = createServer((request: IncomingMessage, response: ServerResponse)
             case 'PUT':
                 modifyUserController('', { username: 'QQQ', age: 1, hobbies: [] })
                 break;
-            case 'DELETE': 
-                deleteUser('');
-            break;
+            case 'DELETE':
+                if ( !chechIsUUID(apiPath[3]) ) {
+                    response.statusCode = 400;
+                    response.end('Enterned userId is not valid UUID');
+                }   
+                else {
+                    response.statusCode = deleteUser(apiPath[3]); 
+                    response.end();
+                }      
+                      
+                break;
             default: console.log('Never');
         }
     }
@@ -41,38 +71,7 @@ server.listen(process.env.PORT, () => {
 
 const server = http.createServer((req, res) => {    
     switch (req.method) {
-        case 'GET':
-            if (req.url === validAPI) {
-                console.log('GET api/users');
-                res.statusCode = 200;
-                res.end(JSON.stringify({ 'users': getAllUsers() }));
-            }
-            else if (req.url.indexOf(`${validAPI}/`) !== -1) {
-                let requestUserId = req.url.split('/')[3];
-                if (requestUserId !== '') {
-                    console.log(`GET api info about user ${requestUserId}`);
-                    let user = getCurrentUser(requestUserId);
-                    console.log('!!!', user)
-                    if (user.id === -1) {
-                        res.statusCode = 404;
-                        res.end();
-                    }
-                    else {
-                        res.statusCode = 200;
-                        res.end(JSON.stringify({ user }))
-                    }
-                } else {
-                    console.log(`GET api ERROR: invalid userID`);
-                    res.statusCode = 400;
-                    res.end();
-                }
-            }
-            else {
-                res.statusCode = 404; //400
-                res.end();
-                console.log('GET route error');
-            }
-            break;
+      
         case 'POST':
             if (req.url.indexOf(validAPI) !== -1) {
                 console.log('POST api/users');
@@ -119,24 +118,7 @@ const server = http.createServer((req, res) => {
                 console.log('PUT route error');
             }
             break;
-        case 'DELETE':
-            if (req.url.indexOf(`${validAPI}/`) !== -1) {
-                let userId = req.url.split('/')[3].split('?')[0];               
-                console.log('DELETE api/users/${userId}');
-                res.statusCode = deleteUser(userId);;
-                res.end();
-            } else {
-                res.statusCode = 404; //400
-                res.end();
-                console.log('DELETE route errror');
-            }
-            break;
-        default:
-            console.log('never');
-    }
+      
 });
 
-server.listen(process.env.PORT, () => {
-    console.log(`Server listen at port ${process.env.PORT}`);
-});
 */
