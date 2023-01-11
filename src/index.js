@@ -88,10 +88,9 @@ const server = http.createServer((req, res) => {
             break;
         case 'DELETE':
             if (req.url.indexOf(`${validAPI}/`) !== -1) {
-                let userId = req.url.split('/')[3].split('?')[0];
-                deleteUser(userId);
+                let userId = req.url.split('/')[3].split('?')[0];               
                 console.log('DELETE api/users/${userId}');
-                res.statusCode = 204;
+                res.statusCode = deleteUser(userId);;
                 res.end();
             } else {
                 res.statusCode = 404; //400
