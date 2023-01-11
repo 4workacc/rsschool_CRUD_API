@@ -14,18 +14,19 @@ const server = http.createServer((req, res) => {
                 res.end(JSON.stringify({ 'users': getAllUsers() }));
             }
             else if (req.url.indexOf(`${validAPI}/`) !== -1) {
-                let requestUserId = req.url.split('/')[3] || -1;               
-                if (requestUserId !== -1) {
+                let requestUserId = req.url.split('/')[3];
+                if (requestUserId !== '') {
                     console.log(`GET api info about user ${requestUserId}`);
-                    if (getCurrentUser(requestUserId).id !== -1) {
-                        res.statusCode = 200;
-                        res.end(JSON.stringify({ 'user': getCurrentUser(requestUserId) }));
-                    } else {
-                        console.log('record with id === userId doesn\'t exist');
+                    let user = getCurrentUser(requestUserId);
+                    console.log('!!!', user)
+                    if (user.id === -1 ){
                         res.statusCode = 404;
                         res.end();
                     }
-
+                    else {
+                        res.statusCode = 200;
+                        res.end(JSON.stringify({user}))
+                    }
                 } else {
                     console.log(`GET api ERROR: invalid userID`);
                     res.statusCode = 400;
