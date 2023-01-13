@@ -9,7 +9,7 @@ dotenv.config();
 
 const validAPI: string = '/api/users';
 
-const server = createServer((request: IncomingMessage, response: ServerResponse) => {
+export const server = createServer((request: IncomingMessage, response: ServerResponse) => {
     let apiPath: string[] = request.url!.split('/');
     console.log(apiPath);
     if (!(apiPath[1] === 'api') || !(apiPath[2].split('?')[0] === 'users')) {

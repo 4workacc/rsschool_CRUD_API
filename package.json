@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start:dev": "nodemon ./src/index.ts"
+    "start:dev": "nodemon ./src/index.ts",
+    "start:multi" : "nodemon ./src/cluster.ts"
   },
   "repository": {
     "type": "git",
