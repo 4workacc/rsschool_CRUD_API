@@ -15,7 +15,7 @@ if (cluster.isPrimary) {
     let nPort: number = +process.env.PORT! || 5000;
     var worker;
     for (var i = 0; i < cpus; i++) {
-        nPort = nPort + i;
+        nPort = nPort + 1;
         worker = cluster.fork({ port: nPort });
         pidToPort[worker.process.pid] = nPort;
     }
