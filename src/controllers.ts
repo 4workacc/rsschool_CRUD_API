@@ -1,14 +1,8 @@
 import { IUserData } from "./inerfaces";
 import * as uuid from 'uuid';
+import { userBase } from "./userBase";
 
-let userBase: IUserData[] = [
-    {
-        id: 'a24a6ea4-ce75-4665-a070-57453082c256',
-        username: 'III',
-        age: 1,
-        hobbies: []
-    }
-]
+
 
 export const getAllUsersController = ():IUserData[] => {
     return userBase;

@@ -8,6 +8,7 @@ import { chechIsUUID } from "./utils";
 
 dotenv.config();
 
+let ix = 0;
 
 if (cluster.isPrimary) {   
     let cpus = os.cpus().length;    
@@ -15,18 +16,14 @@ if (cluster.isPrimary) {
     let nPort: number = +process.env.PORT! || 5000;
     var worker;
     for (var i = 0; i < cpus; i++) {
-        nPort = nPort + 1;
-        worker = cluster.fork({ port: nPort });
+        nPort = nPort + 1;       
+        worker = cluster.fork({ port: nPort });        
         pidToPort[worker.process.pid] = nPort;
+        process.env.PORT = (nPort)+'';
     }
-
-    console.log(pidToPort);
-
     cluster.on('exit', function (worker, code, signal) {     
         console.log('worker ' + worker.process.pid + ' died');
-    });
-    let s: string =  Object.values(pidToPort).join(' ');  
-    console.log(`Serve at ports ${s}`)
+    });   
 } else {  
     const server = createServer((request: IncomingMessage, response: ServerResponse) => {
         let apiPath: string[] = request.url!.split('/');
@@ -101,6 +98,6 @@ if (cluster.isPrimary) {
         }
     });    
     server.listen(process.env.PORT, () => {
-        console.log(`Serve at ports [${process.env.PORT } - ${+(process.env.PORT!)+os.cpus().length}]`)
+        console.log(`Serve at port [${+process.env.PORT }`);        
     });
 }
