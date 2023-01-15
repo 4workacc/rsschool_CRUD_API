@@ -23,8 +23,7 @@ export const server = createServer((request: IncomingMessage, response: ServerRe
                     response.statusCode = 200;
                     getAllUsersController().then((data)=>{
                         response.end(JSON.stringify( data ));
-                    }) 
-                    
+                    })                     
                 }
                 else {
                     if (!chechIsUUID(apiPath[3])) {
@@ -84,10 +83,8 @@ export const server = createServer((request: IncomingMessage, response: ServerRe
                     deleteUser(apiPath[3]).then((dat)=>{
                         response.statusCode = dat;
                         response.end();
-                    }); 
-                    
-                }      
-                      
+                    });                     
+                }                            
                 break;
             default: console.log('Never');
         }

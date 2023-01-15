@@ -100,8 +100,7 @@ if (cluster.isPrimary) {
                             deleteUser(apiPath[3]).then((dat)=>{
                                 response.statusCode = dat;
                                 response.end();
-                            }); 
-                            
+                            });                             
                         }      
                               
                         break;

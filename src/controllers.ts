@@ -5,7 +5,7 @@ import * as fs from 'fs';
 import { readFile, writeFile } from 'fs/promises';
 
 export const getAllUsersController = async ():Promise<IUserData[]> => {
-    let data = JSON.parse(await readFile("./src/db/local.json", "utf8")); 
+    let data = JSON.parse(await readFile("./src/db/local.json", "utf8")) || []; 
     return(data);
 };
 
@@ -16,7 +16,7 @@ export const getOneUserController = async ( userId: string ):Promise<IUserData> 
         age: 1,
         hobbies: []
     };
-    let data = JSON.parse(await readFile("./src/db/local.json", "utf8"));
+    let data = JSON.parse(await readFile("./src/db/local.json", "utf8")) || [];
     data.forEach( (el:IUserData) => {
         if ( el.id === userId ) {
             outUser = el;
@@ -45,7 +45,8 @@ export const addUserController = async (userData: IUserData):Promise<IUserData> 
 
 export const modifyUserController = (userId: string, updatedUserData: IUserData ) => {};
 
-export const deleteUser = async(userId: string ):Promise<number> => {
+export const deleteUser = async(userId: string ):Promise<any> => {
+    let ansCode = 404;
     let arr = [];
     await readFile("./src/db/local.json", "utf8").then((data)=>{
         arr = JSON.parse(data);
@@ -53,9 +54,10 @@ export const deleteUser = async(userId: string ):Promise<number> => {
             if ( el.id === userId ) {
                 arr.splice(i, 1);
                 writeFile('./src/db/local.json', JSON.stringify(arr));
-                return 204
-            }           
+                console.log(`DELETE status`, 204)
+                ansCode = 204;
+            }                   
         })        
     });
-    return 404
+    return ansCode;
 };
