@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start:dev": "nodemon ./src/index.ts",
-    "start:multi" : "nodemon ./src/cluster.ts"
+    "start:multi": "nodemon ./src/cluster.ts",
+    "test":"mocha -r ts-node/register './src/tests/*.ts'"
   },
   "repository": {
     "type": "git",
@@ -18,7 +19,9 @@
   },
   "homepage": "https://github.com/4workacc/rsschool_CRUD_API#readme",
   "devDependencies": {
+    "@types/mocha": "^10.0.1",
     "dotenv": "^16.0.3",
+    "mocha": "^10.2.0",
     "nodemon": "^2.0.20",
     "ts-node": "^10.9.1",
     "typescript": "^4.9.4"
