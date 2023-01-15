@@ -1,21 +1,23 @@
 import { IUserData } from "./inerfaces";
 import * as uuid from 'uuid';
 import { userBase } from "./userBase";
+import * as fs from 'fs';
+import { readFile, writeFile } from 'fs/promises';
 
-
-
-export const getAllUsersController = ():IUserData[] => {
-    return userBase;
+export const getAllUsersController = async ():Promise<IUserData[]> => {
+    let data = JSON.parse(await readFile("./src/db/local.json", "utf8")); 
+    return(data);
 };
 
-export const getOneUserController = ( userId: string ):IUserData => {
+export const getOneUserController = async ( userId: string ):Promise<IUserData> => {
     let outUser:IUserData = {
         id: '-1',
         username: '',
         age: 1,
         hobbies: []
     };
-    userBase.forEach( (el:IUserData) => {
+    let data = JSON.parse(await readFile("./src/db/local.json", "utf8"));
+    data.forEach( (el:IUserData) => {
         if ( el.id === userId ) {
             outUser = el;
         }
@@ -23,8 +25,7 @@ export const getOneUserController = ( userId: string ):IUserData => {
     return outUser;
 };
 
-export const addUserController = (userData: IUserData):IUserData => {
-    console.log('hobbies', userData.hobbies)
+export const addUserController = async (userData: IUserData):Promise<IUserData> => {    
     let newUUID: string = uuid.v4();
     let newUser = {
         id: newUUID,
@@ -32,18 +33,29 @@ export const addUserController = (userData: IUserData):IUserData => {
         age: userData.age,
         hobbies: userData.hobbies,
     };
-    userBase.push(newUser);
+    let arr = [];    
+    await readFile("./src/db/local.json", "utf8").then((data)=>{
+        arr = JSON.parse(data);
+        arr.push(newUser);   
+        writeFile('./src/db/local.json', JSON.stringify(arr))     
+    });     
+    
     return newUser;
 };
 
 export const modifyUserController = (userId: string, updatedUserData: IUserData ) => {};
 
-export const deleteUser = (userId: string ):number => {
-    for ( let i=0; i<userBase.length; i++) {
-                if ( userBase[i].id === userId ) {
-                    userBase.splice(i, 1);
-                    return 200;
-                }
-            } 
-            return 404;
+export const deleteUser = async(userId: string ):Promise<number> => {
+    let arr = [];
+    await readFile("./src/db/local.json", "utf8").then((data)=>{
+        arr = JSON.parse(data);
+        arr.forEach(( el, i) => {
+            if ( el.id === userId ) {
+                arr.splice(i, 1);
+                writeFile('./src/db/local.json', JSON.stringify(arr));
+                return 204
+            }           
+        })        
+    });
+    return 404
 };

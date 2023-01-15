@@ -21,7 +21,10 @@ export const server = createServer((request: IncomingMessage, response: ServerRe
             case 'GET':
                 if (request.url === '/api/users') {
                     response.statusCode = 200;
-                    response.end(JSON.stringify( getAllUsersController() ));
+                    getAllUsersController().then((data)=>{
+                        response.end(JSON.stringify( data ));
+                    }) 
+                    
                 }
                 else {
                     if (!chechIsUUID(apiPath[3])) {
@@ -29,13 +32,16 @@ export const server = createServer((request: IncomingMessage, response: ServerRe
                         response.end('Enterned userId is not valid UUID');
                     }
                     else {
-                        if (getOneUserController(apiPath[3]).id === '-1') {
-                            response.statusCode = 404;
-                            response.end(`User with id = ${apiPath[3]} not found`)
-                        } else {
-                            response.statusCode = 200;
-                            response.end( JSON.stringify(getOneUserController(apiPath[3])))
-                        }
+                        getOneUserController(apiPath[3]).then((data)=>{
+                            if (data.id === '-1') {
+                                response.statusCode = 404;
+                                response.end(`User with id = ${apiPath[3]} not found`)
+                            } else {
+                                response.statusCode = 200;
+                                response.end( JSON.stringify(data))
+                            }
+                        })
+                       
                     }
                 }
                 break;
@@ -51,12 +57,15 @@ export const server = createServer((request: IncomingMessage, response: ServerRe
                 let splittedHobbies = reqData.hobbies.split('[')[1].split(']')[0].split(',');                
                 if ( reqData['username'] && reqData['age'] && reqData['hobbies'] ) {
                     response.statusCode = 200;
-                    response.end(JSON.stringify(addUserController({
+                    addUserController({
                         id: '',
                         username: reqData.username,
                         age: reqData.age,
                         hobbies: splittedHobbies
-                    })))                    
+                    }).then((dat)=>{
+                        response.end(JSON.stringify(dat))
+                    });      
+                     
                 } else {
                     response.statusCode = 400;
                     response.end('Request body does not contain required fields');
@@ -72,8 +81,11 @@ export const server = createServer((request: IncomingMessage, response: ServerRe
                     response.end('Enterned userId is not valid UUID');
                 }   
                 else {
-                    response.statusCode = deleteUser(apiPath[3]); 
-                    response.end();
+                    deleteUser(apiPath[3]).then((dat)=>{
+                        response.statusCode = dat;
+                        response.end();
+                    }); 
+                    
                 }      
                       
                 break;
