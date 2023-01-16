@@ -24,8 +24,9 @@ if (cluster.isPrimary) {
     cluster.on('exit', function (worker, code, signal) {
         console.log('worker ' + worker.process.pid + ' died');
     });
-} else {
+} else {    
     const server = createServer((request: IncomingMessage, response: ServerResponse) => {
+        try {
         let apiPath: string[] = request.url!.split('/');
         console.log(apiPath);
         if (!(apiPath[1] === 'api') || !(apiPath[2].split('?')[0] === 'users')) {
@@ -129,11 +130,15 @@ if (cluster.isPrimary) {
                             response.end();
                         });
                     }
-
                     break;
                 default: console.log('Never');
             }
         }
+    }
+    catch (err) {
+        response.statusCode = 500;
+        response.end('Something wrong...', err)
+    }
     });
     server.listen(process.env.PORT, () => {
         console.log(`Serve at port [${+process.env.PORT}`);
