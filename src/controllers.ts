@@ -1,7 +1,5 @@
 import { IUserData } from "./inerfaces";
 import * as uuid from 'uuid';
-import { userBase } from "./userBase";
-import * as fs from 'fs';
 import { readFile, writeFile } from 'fs/promises';
 
 export const getAllUsersController = async (): Promise<IUserData[]> => {
