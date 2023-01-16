@@ -32,31 +32,84 @@ const utils_1 = require("./utils");
 dotenv.config();
 const validAPI = '/api/users';
 exports.server = (0, http_1.createServer)((request, response) => {
-    let apiPath = request.url.split('/');
-    console.log(apiPath);
-    if (!(apiPath[1] === 'api') || !(apiPath[2].split('?')[0] === 'users')) {
-        response.statusCode = 404;
-        response.end('Request is not valid endpoint');
-    }
-    else {
-        switch (request.method) {
-            case 'GET':
-                if (request.url === '/api/users') {
-                    response.statusCode = 200;
-                    (0, controllers_1.getAllUsersController)().then((data) => {
-                        response.end(JSON.stringify(data));
-                    });
-                }
-                else {
-                    if (!(0, utils_1.chechIsUUID)(apiPath[3])) {
+    try {
+        let apiPath = request.url.split('/');
+        console.log(apiPath);
+        if (!(apiPath[1] === 'api') || !(apiPath[2].split('?')[0] === 'users')) {
+            response.statusCode = 404;
+            response.end('Request is not valid endpoint');
+        }
+        else {
+            switch (request.method) {
+                case 'GET':
+                    if (request.url === '/api/users') {
+                        response.statusCode = 200;
+                        (0, controllers_1.getAllUsersController)().then((data) => {
+                            response.end(JSON.stringify(data));
+                        });
+                    }
+                    else {
+                        if (!(0, utils_1.chechIsUUID)(apiPath[3])) {
+                            response.statusCode = 400;
+                            response.end('Enterned userId is not valid UUID');
+                        }
+                        else {
+                            (0, controllers_1.getOneUserController)(apiPath[3]).then((data) => {
+                                if (data.id === '-1') {
+                                    response.statusCode = 404;
+                                    response.end(`User with id = ${apiPath[3]} not found`);
+                                }
+                                else {
+                                    response.statusCode = 200;
+                                    response.end(JSON.stringify(data));
+                                }
+                            });
+                        }
+                    }
+                    break;
+                case 'POST':
+                    let requestBody = new url_1.URL(`http://localhost:4000/${request.url}`).searchParams;
+                    let reqData = { id: '', username: '', age: 1, hobbies: '' };
+                    for (const [key, value] of requestBody) {
+                        reqData[key] = value;
+                    }
+                    let splittedHobbies = reqData.hobbies.split('[')[1].split(']')[0].split(',');
+                    if (reqData['username'] && reqData['age'] && reqData['hobbies']) {
+                        response.statusCode = 200;
+                        (0, controllers_1.addUserController)({
+                            id: '',
+                            username: reqData.username,
+                            age: reqData.age,
+                            hobbies: splittedHobbies
+                        }).then((dat) => {
+                            response.end(JSON.stringify(dat));
+                        });
+                    }
+                    else {
+                        response.statusCode = 400;
+                        response.end('Request body does not contain required fields');
+                    }
+                    break;
+                case 'PUT':
+                    let requestBody1 = new url_1.URL(`http://localhost:4000/${request.url}`).searchParams;
+                    let reqData1 = { id: '', username: '', age: 1, hobbies: '' };
+                    for (const [key, value] of requestBody1) {
+                        reqData1[key] = value;
+                    }
+                    let userID = reqData1['id'];
+                    let userUsername = reqData1['username'] || 'XXX';
+                    let userAge = reqData1['age'] || -1;
+                    let userHobbies = reqData1['hobbies'] || [];
+                    console.log(userID);
+                    if (!(0, utils_1.chechIsUUID)(userID)) {
                         response.statusCode = 400;
                         response.end('Enterned userId is not valid UUID');
                     }
                     else {
-                        (0, controllers_1.getOneUserController)(apiPath[3]).then((data) => {
-                            if (data.id === '-1') {
+                        (0, controllers_1.modifyUserController)(userID, { username: userUsername, age: userAge, hobbies: [...userHobbies] }).then((data) => {
+                            if (data.id === '-123') {
                                 response.statusCode = 404;
-                                response.end(`User with id = ${apiPath[3]} not found`);
+                                response.end('User not found');
                             }
                             else {
                                 response.statusCode = 200;
@@ -64,73 +117,26 @@ exports.server = (0, http_1.createServer)((request, response) => {
                             }
                         });
                     }
-                }
-                break;
-            case 'POST':
-                let requestBody = new url_1.URL(`http://localhost:4000/${request.url}`).searchParams;
-                let reqData = { id: '', username: '', age: 1, hobbies: '' };
-                for (const [key, value] of requestBody) {
-                    reqData[key] = value;
-                }
-                let splittedHobbies = reqData.hobbies.split('[')[1].split(']')[0].split(',');
-                if (reqData['username'] && reqData['age'] && reqData['hobbies']) {
-                    response.statusCode = 200;
-                    (0, controllers_1.addUserController)({
-                        id: '',
-                        username: reqData.username,
-                        age: reqData.age,
-                        hobbies: splittedHobbies
-                    }).then((dat) => {
-                        response.end(JSON.stringify(dat));
-                    });
-                }
-                else {
-                    response.statusCode = 400;
-                    response.end('Request body does not contain required fields');
-                }
-                break;
-            case 'PUT':
-                let requestBody1 = new url_1.URL(`http://localhost:4000/${request.url}`).searchParams;
-                let reqData1 = { id: '', username: '', age: 1, hobbies: '' };
-                for (const [key, value] of requestBody1) {
-                    reqData1[key] = value;
-                }
-                let userID = reqData1['id'];
-                let userUsername = reqData1['username'] || 'XXX';
-                let userAge = reqData1['age'] || -1;
-                let userHobbies = reqData1['hobbies'] || [];
-                console.log(userID);
-                if (!(0, utils_1.chechIsUUID)(userID)) {
-                    response.statusCode = 400;
-                    response.end('Enterned userId is not valid UUID');
-                }
-                else {
-                    (0, controllers_1.modifyUserController)(userID, { username: userUsername, age: userAge, hobbies: [...userHobbies] }).then((data) => {
-                        if (data.id === '-123') {
-                            response.statusCode = 404;
-                            response.end('User not found');
-                        }
-                        else {
-                            response.statusCode = 200;
-                            response.end(JSON.stringify(data));
-                        }
-                    });
-                }
-                break;
-            case 'DELETE':
-                if (!(0, utils_1.chechIsUUID)(apiPath[3])) {
-                    response.statusCode = 400;
-                    response.end('Enterned userId is not valid UUID');
-                }
-                else {
-                    (0, controllers_1.deleteUser)(apiPath[3]).then((dat) => {
-                        response.statusCode = dat;
-                        response.end();
-                    });
-                }
-                break;
-            default: console.log('Never');
+                    break;
+                case 'DELETE':
+                    if (!(0, utils_1.chechIsUUID)(apiPath[3])) {
+                        response.statusCode = 400;
+                        response.end('Enterned userId is not valid UUID');
+                    }
+                    else {
+                        (0, controllers_1.deleteUser)(apiPath[3]).then((dat) => {
+                            response.statusCode = dat;
+                            response.end();
+                        });
+                    }
+                    break;
+                default: console.log('Never');
+            }
         }
+    }
+    catch (err) {
+        response.statusCode = 500;
+        response.end('Something wrong...', err);
     }
 });
 exports.server.listen(process.env.PORT, () => {
